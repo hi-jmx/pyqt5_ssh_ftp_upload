@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(298, 698)
+        MainWindow.resize(300, 698)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.widget = QtWidgets.QWidget(self.centralwidget)
@@ -31,9 +31,13 @@ class Ui_MainWindow(object):
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.h_layout_device.addWidget(self.label)
+
         self.comboBox = QtWidgets.QComboBox(self.widget)
         self.comboBox.setMinimumSize(QtCore.QSize(0, 30))
         self.comboBox.setObjectName("comboBox")
+        font_1 = QtGui.QFont()
+        font_1.setPointSize(10)
+        self.comboBox.setFont(font_1)
         self.h_layout_device.addWidget(self.comboBox)
         self.h_layout_device.setStretch(0, 1)
         self.h_layout_device.setStretch(1, 4)

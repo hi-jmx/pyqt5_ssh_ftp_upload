@@ -5,6 +5,7 @@
 from upload_ui import Ui_MainWindow
 import sys
 from PyQt5.QtWidgets import QMainWindow, QApplication, QDesktopWidget, QHBoxLayout, QWidget, QPushButton
+import PyQt5.QtGui
 import tkinter.messagebox as tmb
 import tkinter.filedialog as tkfd
 import re as myre
@@ -57,6 +58,9 @@ class QMainWin(QMainWindow, Ui_MainWindow):
         self.checkBox_list.append(self.checkBox_9)
         self.device_list.append(self.device_9)
 
+        self.font = PyQt5.QtGui.QFont()
+        self.font.setPointSize(10)
+
 
 
         self.pushButton_select.clicked.connect(self.selectFile)
@@ -101,6 +105,7 @@ class QMainWin(QMainWindow, Ui_MainWindow):
             self.device_counter = 0
             self.comboBox.currentIndexChanged.connect(self.selectionchange)
             for i in range(1, len(self.cur_device_list), 2):
+                self.checkBox_list[self.device_counter].setFont(self.font)
                 self.checkBox_list[self.device_counter].setText(self.cur_device_list[i])
                 self.checkBox_list[self.device_counter].setChecked(True)
                 self.device_list[self.device_counter].setVisible(True)
@@ -115,6 +120,7 @@ class QMainWin(QMainWindow, Ui_MainWindow):
         self.device_counter = 0
         self.cur_device_list = self.device_info[self.change_index]
         for i in range(1, len(self.cur_device_list), 2):
+            self.checkBox_list[self.device_counter].setFont(self.font)
             self.checkBox_list[self.device_counter].setText(self.cur_device_list[i])
             self.checkBox_list[self.device_counter].setChecked(True)
             self.device_list[self.device_counter].setVisible(True)
@@ -190,7 +196,8 @@ class QMainWin(QMainWindow, Ui_MainWindow):
         #     logger.debug("do nothing")
         ssh = SSHUpload()
         ftp = FTPUpload()
-        errorFormat = '<font color="red">{}</font>'
+        errorFormat = '<font color="red" size=4>{}</font>'
+        normalFormat = '<font size=4>{}</font>'
 
         for i in range(len(self.option_dic_list)):
             tmp = self.option_dic_list[i]
@@ -202,20 +209,34 @@ class QMainWin(QMainWindow, Ui_MainWindow):
                 if (1 == res):
                     ssh.upload('./file/dwcertificate','/mnt/config/dwcertificate')
                     ssh.close()
-                    self.textEdit_log.append(tmp['IP'] + "上传成功")
+                    self.textEdit_log.append(normalFormat.format(tmp['IP'] + "上传成功"))
                     self.textEdit_log.show()
                 else:
                     logger.debug("error:do nothing")
                     self.textEdit_log.append(errorFormat.format(tmp['IP'] + "上传失败"))
                     self.textEdit_log.show()
-            if ('JT' == tmp['Type']):
+            if ('JT-2K' == tmp['Type']):
                 ssh.__int__(tmp['IP'], port=22, username='user', pwd='123456')
                 res = ssh.connect()
                 if (1 == res):
                     ssh.upload('./file/dwcertificate', '/tmp/dwcertificate')
                     ssh.close()
                     if (1 == self.upd_save(tmp['IP'], 5300)):
-                        self.textEdit_log.append(tmp['IP'] + "上传成功")
+                        self.textEdit_log.append(normalFormat.format(tmp['IP'] + "上传成功"))
+                    else:
+                        self.textEdit_log.append(errorFormat.format(tmp['IP'] + "上传失败"))
+                        logger.debug("JT:udp save fail")
+                else:
+                    logger.debug("error:do nothing")
+                    self.textEdit_log.append(errorFormat.format(tmp['IP'] + "上传失败"))
+            if ('JT-1K' == tmp['Type']):
+                ssh.__int__(tmp['IP'], port=22, username='root', pwd='jrootd')
+                res = ssh.connect()
+                if (1 == res):
+                    ssh.upload('./file/dwcertificate', '/dev/shm/')
+                    ssh.close()
+                    if (1 == self.upd_save(tmp['IP'], 5300)):
+                        self.textEdit_log.append(normalFormat.format(tmp['IP'] + "上传成功"))
                     else:
                         self.textEdit_log.append(errorFormat.format(tmp['IP'] + "上传失败"))
                         logger.debug("JT:udp save fail")
@@ -228,7 +249,7 @@ class QMainWin(QMainWindow, Ui_MainWindow):
                 if (1 == res):
                     ftp.upload('./file/dwcertificate', '/mnt/disk1/dwcertificate')
                     ftp.close()
-                    self.textEdit_log.append(tmp['IP'] + "上传成功")
+                    self.textEdit_log.append(normalFormat.format(tmp['IP'] + "上传成功"))
                 else:
                     logger.debug("error:do nothing")
                     self.textEdit_log.append(errorFormat.format(tmp['IP'] + "上传失败"))
@@ -238,7 +259,7 @@ class QMainWin(QMainWindow, Ui_MainWindow):
                 if (1 == res):
                     ssh.upload('./file/dwcertificate', '/app/config/dwcertificate')
                     ssh.close()
-                    self.textEdit_log.append(tmp['IP'] + "上传成功")
+                    self.textEdit_log.append(normalFormat.format(tmp['IP'] + "上传成功"))
                 else:
                     logger.debug("error:do nothing")
                     self.textEdit_log.append(errorFormat.format(tmp['IP'] + "上传失败"))
