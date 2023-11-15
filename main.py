@@ -233,7 +233,7 @@ class QMainWin(QMainWindow, Ui_MainWindow):
                 ssh.__int__(tmp['IP'], port=22, username='root', pwd='jrootd')
                 res = ssh.connect()
                 if (1 == res):
-                    ssh.upload('./file/dwcertificate', '/dev/shm/')
+                    ssh.upload('./file/dwcertificate', '/dev/shm/dwcertificate')
                     ssh.close()
                     if (1 == self.upd_save(tmp['IP'], 5300)):
                         self.textEdit_log.append(normalFormat.format(tmp['IP'] + "上传成功"))
